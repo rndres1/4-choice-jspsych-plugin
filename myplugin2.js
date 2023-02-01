@@ -12,6 +12,10 @@ var myplugin2 = (function (jspsych) {
         type: jspsych.ParameterType.IMAGE,
         default: undefined,
       },
+      instruction: {
+        type: jspsych.ParameterType.STRING,
+        default: undefined,
+      }
     },
   };
 
@@ -36,7 +40,12 @@ var myplugin2 = (function (jspsych) {
      */
 
       // show image
-      let html_content = `      
+      let html_content = `
+      <div>
+      <h3>
+      ${trial.instruction}
+      </h3>
+      </div>
       <div class="outer-container">
       <div class="container">
           <img src="${trial.image_fnames[0]}" class="image">
