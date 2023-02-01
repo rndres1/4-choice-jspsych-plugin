@@ -4,10 +4,6 @@ var myplugin2 = (function (jspsych) {
   const info = {
     name: "myplugin2",
     parameters: {
-      duration: {
-        type: jspsych.ParameterType.INT,
-        default: 700,
-      },
       image_fnames: {
         type: jspsych.ParameterType.IMAGE,
         default: undefined,
@@ -28,25 +24,30 @@ var myplugin2 = (function (jspsych) {
     https://www.jspsych.org/7.3/developers/plugin-development/
     Inside the .trial() method you can do pretty much anything that you want, including modifying the DOM, 
     setting up event listeners, and making asynchronous requests
-    */
+    
+    basically,
+    the trial function sets up the display (DOM), registers the event listeners, and waits.
 
+    TODO: https://www.jspsych.org/7.3/reference/jspsych-pluginAPI/#preloadimages 
+
+    */ 
     trial(display_element, trial)
     {
-     
+      
       // show image
       let html_content = `
       <div>
-      <h3>
+      <h2>
       ${trial.instruction}
-      </h3>
+      </h2>
       </div>
       <div class="outer-container">
-      <div class="container">
-          <img src="${trial.image_fnames[0]}" class="image" id="image01">
-          <img src="${trial.image_fnames[1]}" class="image" id="image02">
-          <img src="${trial.image_fnames[2]}" class="image" id="image03">
-          <img src="${trial.image_fnames[3]}" class="image" id="image04">      
-      <div>
+        <div class="container">
+            <img src="${trial.image_fnames[0]}" class="image" id="image01">
+            <img src="${trial.image_fnames[1]}" class="image" id="image02">
+            <img src="${trial.image_fnames[2]}" class="image" id="image03">
+            <img src="${trial.image_fnames[3]}" class="image" id="image04">      
+        <div>
           <button class="next-button" disabled id="nextButton">Next</button>
       </div>
       </div>
@@ -57,9 +58,11 @@ var myplugin2 = (function (jspsych) {
       `;
       //console.log(html_content);
       display_element.innerHTML = html_content;
+      var start_time = performance.now();
+      console.log(start_time)
 
       /* 
-      ==================== pasted from ChatGPT ==========
+      ============ pasted from ChatGPT ==========
       */
       const images = document.querySelectorAll('.image');
       let selectedImageId;
@@ -75,32 +78,54 @@ var myplugin2 = (function (jspsych) {
           selectedImageId = image.id;
           console.log(selectedImageId);
           document.getElementById("selectedImageId").value = selectedImageId;
+
+          var nextbutton_element = document.getElementById("nextButton");
+          nextbutton_element.removeAttribute("disabled");
         });
       });
       /*
       ===========================================
       */
 
-      const after_key_response = (info) => {  
+      const after_mouse_response = () => {  
+        var end_time = performance.now();
+        console.log(end_time)
+        var calculated_rt = Math.round(end_time - start_time);
+        
         // record the data
-        let data = {
-          rt: info.rt,
+
+        let data_saved = {
+          rt: calculated_rt,
           selectedImageId: document.getElementById("selectedImageId").value,
         }        
-        console.log(data);
+        console.log(data_saved);
         // clear the HTML stuff that was previously created
         display_element.innerHTML = '';    
-        // THIS IS WHERE the trial ENDS
-        this.jsPsych.finishTrial(data);
-      }
+        
+        /* 
+        The only requirement for the trial method is that it calls jsPsych.finishTrial() when it is done. 
+        This is how jsPsych knows to advance to the next trial in the experiment 
+        (or end the experiment if it is the last trial). 
+        The plugin can do whatever it needs to do before that point.
+        */
+        this.jsPsych.finishTrial(data_saved);
+      } // after_key_response  ends
     
-      // set up a keyboard event to respond only to the spacebar
+
+      const nextbutton_element = document.getElementById("nextButton");
+      nextbutton_element.addEventListener("click", after_mouse_response);
+
+      /* // set up a keyboard event to respond only to the spacebar
       this.jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: after_key_response,
         valid_responses: [' '],
         persist: false
-      });
-    }
+      }); */
+
+
+      
+
+    }// trial function ends
   }
   myplugin2.info = info;
 
