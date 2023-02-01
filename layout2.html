@@ -1,0 +1,64 @@
+<!-- partially from ChatGPT  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex4x4</title>
+
+<style>
+.outer-container {
+  max-width: 800px;
+  height: 500px;
+  margin: 0 auto;
+  position: absolute;
+}
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
+  position: relative;
+}
+.padding {
+    display: flex;
+    height: 70%;
+}
+.image {
+  max-width: 300px;
+  height: auto;
+  margin: 20px;
+}
+.next-button {
+  position: relative;
+  bottom: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+@media (min-width: 960px) {
+  .image {
+    width: calc(45% - 10px);
+    max-width: calc(45% - 10px);
+  }
+}
+</style>
+</head>
+<body>
+    <div class="outer-container">
+        <div class="container">
+            <img src="./media/Satisfaction.png" class="image">
+            <img src="./media/Surprise.png" class="image">
+            <img src="./media/Resentment.png" class="image">
+            <img src="./media/Affection.png" class="image">
+        </div>
+        <div class="padding"></div>
+        <div>
+            <button class="next-button">Next</button>
+        </div>
+        </div>
+    </div>
+</body>
+</html>
